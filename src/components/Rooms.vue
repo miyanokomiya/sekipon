@@ -7,6 +7,7 @@
         </v-btn>
       </v-flex>
       <v-flex xs12 sm6 offset-sm3>
+        <!-- 部屋情報カード -->
         <v-card class="room-card" v-for="(room, index) in rooms" v-bind:room="room" v-bind:index="index" v-bind:key="room.id">
           <v-card-title primary-title>
             <div>
@@ -16,10 +17,12 @@
             </div>
           </v-card-title>
           <v-card-actions>
+            <v-btn primary dark v-on:click="openRoom(room.id)">
+              Open
+            </v-btn>
             <v-btn primary small fab dark @click.native="readyEdit(room)">
               <v-icon dark>edit</v-icon>
             </v-btn>
-            
             <v-btn small fab dark class="black" v-on:click="removeRoom(room)">
               <v-icon dark>delete</v-icon>
             </v-btn>
@@ -53,9 +56,10 @@
 <script>
 import { mapState, mapMutations, mapActions } from 'vuex'
 import types from '@/store/modules/rooms/types'
+import router from '@/router'
 
 export default {
-  name: 'hello',
+  name: 'rooms',
   created () {
     this.load()
   },
@@ -107,6 +111,13 @@ export default {
     dateFormat (val) {
       let date = new Date(val)
       return date.toLocaleString()
+    },
+    openRoom (id) {
+      router.push({
+        name: 'room',
+        params: {
+          id: id
+        }})
     }
   }
 }
