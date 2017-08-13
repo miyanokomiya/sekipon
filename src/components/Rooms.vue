@@ -19,6 +19,7 @@
             <v-btn primary small fab dark @click.native="readyEdit(room)">
               <v-icon dark>edit</v-icon>
             </v-btn>
+            
             <v-btn small fab dark class="black" v-on:click="removeRoom(room)">
               <v-icon dark>delete</v-icon>
             </v-btn>
@@ -51,7 +52,7 @@
 
 <script>
 import { mapState, mapMutations, mapActions } from 'vuex'
-import type from '@/store/modules/rooms/type'
+import types from '@/store/modules/rooms/types'
 
 export default {
   name: 'hello',
@@ -94,14 +95,14 @@ export default {
   },
   methods: {
     ...mapMutations('rooms', {
-      readyEdit: type.READY_EDIT,
-      localEdit: type.LOCAL_EDIT,
-      cancelEdit: type.CANCEL_EDIT
+      readyEdit: types.READY_EDIT,
+      localEdit: types.LOCAL_EDIT,
+      cancelEdit: types.CANCEL_EDIT
     }),
     ...mapActions('rooms', {
-      load: type.LOAD,
-      removeRoom: type.REMOVE,
-      commitEdit: type.COMMIT_EDIT
+      load: types.LOAD,
+      removeRoom: types.REMOVE,
+      commitEdit: types.COMMIT_EDIT
     }),
     dateFormat (val) {
       let date = new Date(val)
