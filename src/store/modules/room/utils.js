@@ -1,5 +1,5 @@
 export const SCALE_MAX = 10
-export const SCALE_MIN = 0.8
+export const SCALE_MIN = 0.2
 
 export function v2f (viewArea, p) {
   return {
@@ -78,7 +78,7 @@ export function pinchCanvas (viewArea, p0, p1, latestPinchDistance) {
   }
 
   let scale = viewArea.scale
-  let d = Math.pow(Math.pow((p0.x - p1.x), 2) + Math.pow((p0.y - p1.y), 2), 1 / 2)
+  let d = Math.pow(Math.pow(p0.x - p1.x, 2) + Math.pow(p0.y - p1.y, 2), 1 / 2)
   if (latestPinchDistance && latestPinchDistance > 0) {
     let delta = latestPinchDistance - d
 

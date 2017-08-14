@@ -63,8 +63,12 @@ export default {
       const viewArea = state.viewArea
       const width = state.canvas.width
       const height = state.canvas.height
-      const viewBox = `${viewArea.left} ${viewArea.top} ${width * viewArea.scale} ${height * viewArea.scale}`
+      const viewBox = `${viewArea.left} ${viewArea.top} ${width *
+        viewArea.scale} ${height * viewArea.scale}`
       return viewBox
+    },
+    selectedNodeIdList: state => {
+      return [state.target.root]
     }
   }
 }

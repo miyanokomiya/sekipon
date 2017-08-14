@@ -2,7 +2,7 @@
   <v-container fluid grid-list-lg>
     <v-layout row wrap>
       <div v-if="profile">
-        {{profile.name}}
+        {{profile.name}} {{svgViewBox}}
       </div>
       <div class="svg-box">
         <svg
@@ -11,12 +11,12 @@
           :width="canvas.width"
           :height="canvas.height"
           :viewBox="svgViewBox"
-          @mousedown.left="downOnCanvas"
-          @touchstart="downOnCanvas"
-          @mouseup.left="upOnCanvas"
-          @touchend="upOnCanvas"
-          @mousemove="dragOnCanvas"
-          @touchmove="dragOnCanvas"
+          @mousedown.left.prevent="downOnCanvas"
+          @touchstart.prevent="downOnCanvas"
+          @mouseup.left.prevent="upOnCanvas"
+          @touchend.prevent="upOnCanvas"
+          @mousemove.prevent="dragOnCanvas"
+          @touchmove.prevent="dragOnCanvas"
           @mousewheel.prevent="wheelOnCanvas"
         >
           <g
@@ -71,13 +71,11 @@ export default {
       viewArea: state => state.viewArea,
       nodeMap: state => state.nodeMap,
       canvas: state => state.canvas,
-      selectedNodeList: state => {
-        return [state.target.root]
-      },
       _modeType: state => state.modeType
     }),
     ...mapGetters('room', [
-      'svgViewBox'
+      'svgViewBox',
+      'selectedNodeIdList'
     ]),
     modeType: {
       get () {
@@ -93,7 +91,8 @@ export default {
       changeMode: types.CHANGE_MODE,
       _downOnCanvas: types.CURSOR_DOWN,
       downOnNode: types.CURSOR_DOWN_ON_NODE,
-      _wheelOnCanvas: types.WHEEL_ON_CANVAS
+      _wheelOnCanvas: types.WHEEL_ON_CANVAS,
+      _multiTouchOnCanvas: types.CURSOR_MULTI_TOUCH
     }),
     ...mapActions('room', {
       load: types.LOAD,
@@ -109,10 +108,17 @@ export default {
       })
     },
     dragOnCanvas (e) {
-      const p = utils.getPoint(e)
-      this._dragOnCanvas({
-        position: p
-      })
+      if (utils.isMulitTouch(e)) {
+        const positions = utils.getPoints(e)
+        this._multiTouchOnCanvas({
+          positions
+        })
+      } else {
+        const p = utils.getPoint(e)
+        this._dragOnCanvas({
+          position: p
+        })
+      }
     },
     upOnCanvas (e) {
       this._upOnCanvas({
@@ -127,7 +133,7 @@ export default {
       })
     },
     isSelected (id) {
-      return (this.selectedNodeList.indexOf(id) !== -1)
+      return (this.selectedNodeIdList.indexOf(id) !== -1)
     }
   }
 }
