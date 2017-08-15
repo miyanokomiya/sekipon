@@ -1,14 +1,6 @@
 import mutations from './mutations'
 import actions from './actions'
-
-export const modeTypes = {
-  HAND: 'HAND',
-  SET: 'SET'
-}
-
-export const nodeTypes = {
-  SEAT: 'SEAT'
-}
+import { modeTypes, nodeTypes } from './utils'
 
 export default {
   namespaced: true,

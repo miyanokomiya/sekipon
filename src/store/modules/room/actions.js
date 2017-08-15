@@ -1,6 +1,7 @@
 import { firebaseDb } from '@/firebase'
+import rootTypes from '@/store/types'
 import types from './types'
-import { v2f } from './utils'
+import { modeTypes, v2f } from './utils'
 
 export default {
   [types.LOAD] (context, { id }) {
@@ -9,7 +10,9 @@ export default {
 
     // 部屋情報取得
     firebaseDb.ref(`rooms/${id}`).once('value', data => {
-      context.commit(types.INIT, { room: data.val() })
+      const room = data.val()
+      context.commit(types.INIT, { room })
+      context.commit(rootTypes.SET_TITLE, room.name, { root: true })
 
       // 部屋詳細情報と接続
       const ref = firebaseDb.ref(`roomDetails/${id}/nodeMap`)
@@ -33,7 +36,8 @@ export default {
       id,
       type,
       x,
-      y
+      y,
+      state: 0
     }
     firebaseDb.ref(`roomDetails/${roomId}/nodeMap/${id}`).set(node).then(() => {
       context.commit(types.SELECT_NODE, { id })
@@ -72,13 +76,14 @@ export default {
     }
   },
   [types.CURSOR_UP] (context, { time }) {
-    const cursorState = context.state.cursorState
+    const state = context.state
+    const roomId = state.profile.id
+    const cursorState = state.cursorState
     if (cursorState.drag) {
       // 選択中要素があるかどうか
-      const target = context.state.nodeMap[context.state.target.root]
+      const target = state.nodeMap[state.target.root]
       if (target) {
         // 編集をコミットする
-        const roomId = context.state.profile.id
         firebaseDb
           .ref(`roomDetails/${roomId}/nodeMap/${target.id}`)
           .update(target)
@@ -87,7 +92,7 @@ export default {
       if (time - cursorState.down.time < 300) {
         if (!cursorState.down.target) {
           // 新規作成
-          const fP = v2f(context.state.viewArea, cursorState.position)
+          const fP = v2f(state.viewArea, cursorState.position)
           context.dispatch(types.ADD_NODE, {
             x: fP.x,
             y: fP.y
@@ -95,7 +100,17 @@ export default {
         } else {
           // カーソル下に要素あり
           const id = cursorState.down.target
+          const target = state.nodeMap[id]
           context.commit(types.SELECT_NODE, { id })
+
+          if (state.modeType === modeTypes.TOGGLE_STATE) {
+            const nextTarget = Object.assign({}, target, {
+              state: target.state === 0 ? 1 : 0
+            })
+            firebaseDb
+              .ref(`roomDetails/${roomId}/nodeMap/${nextTarget.id}`)
+              .update(nextTarget)
+          }
         }
       }
     }

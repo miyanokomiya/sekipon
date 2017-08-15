@@ -23,6 +23,9 @@ export default {
   },
   [types.REMOVE_NODE] (state, { id }) {
     Vue.delete(state.nodeMap, id)
+    if (id === state.target.root) {
+      state.target.root = null
+    }
   },
   [types.SELECT_NODE] (state, { id }) {
     state.target.root = id

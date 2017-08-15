@@ -1,3 +1,13 @@
+export const modeTypes = {
+  HAND: 'HAND',
+  SET: 'SET',
+  TOGGLE_STATE: 'TOGGLE_STATE'
+}
+
+export const nodeTypes = {
+  SEAT: 'SEAT'
+}
+
 export const SCALE_MAX = 10
 export const SCALE_MIN = 0.2
 

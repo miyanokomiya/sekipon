@@ -2,7 +2,7 @@
   <v-container fluid grid-list-lg>
     <v-layout row wrap>
       <div v-if="profile">
-        {{profile.name}} {{svgViewBox}}
+        {{svgViewBox}}
       </div>
       <div class="svg-box">
         <svg
@@ -30,7 +30,7 @@
               :cx="node.x"
               :cy="node.y"
               r="30"
-              fill="blue"
+              :fill="node.state === 0 ? 'blue' : 'red'"
               :stroke="isSelected(node.id) ? 'black' : 'none'"
               stroke-width="4"
             >
@@ -38,10 +38,13 @@
           </g>
         </svg>
       </div>
-      <v-btn-toggle :items="toggle_text" v-model="modeType"></v-btn-toggle>
-      <v-btn small fab dark class="black" @click="removeNode">
-        <v-icon dark>delete</v-icon>
-      </v-btn>
+      
+      <div v-if="showMenu">
+        <v-btn-toggle :items="toggle_text" v-model="modeType"></v-btn-toggle>
+        <v-btn small fab dark class="black" @click="removeNode">
+          <v-icon dark>delete</v-icon>
+        </v-btn>
+      </div>
     </v-layout>
   </v-container>
 </template>
@@ -49,7 +52,7 @@
 <script>
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import types from '@/store/modules/room/types'
-import {modeTypes} from '@/store/modules/room'
+import { modeTypes } from '@/store/modules/room/utils'
 import * as utils from './utils'
 
 export default {
@@ -61,8 +64,10 @@ export default {
     return {
       toggle_text: [
         { text: modeTypes.HAND, value: modeTypes.HAND },
-        { text: modeTypes.SET, value: modeTypes.SET }
-      ]
+        { text: modeTypes.SET, value: modeTypes.SET },
+        { text: modeTypes.TOGGLE_STATE, value: modeTypes.TOGGLE_STATE }
+      ],
+      showMenu: true
     }
   },
   computed: {
@@ -152,5 +157,9 @@ export default {
 }
 svg {
   font-family: sans-serif;
+}
+.tab-content {
+  padding: 5px;
+  text-align: left;
 }
 </style>
