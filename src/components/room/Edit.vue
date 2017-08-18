@@ -19,23 +19,15 @@
           @touchmove.prevent="dragOnCanvas"
           @mousewheel.prevent="wheelOnCanvas"
         >
-          <g
+          <node
             v-for="node in nodeMap"
             :key="node.id"
             :data-id="node.id"
-            @mousedown.left="downOnNode({target: node.id})"
-            @touchstart="downOnNode({target: node.id})"
-          >
-            <circle
-              :cx="node.x"
-              :cy="node.y"
-              r="30"
-              :fill="node.state === 0 ? 'blue' : 'red'"
-              :stroke="isSelected(node.id) ? 'black' : 'none'"
-              stroke-width="4"
-            >
-            </circle>
-          </g>
+            :node="node"
+            :isSelected="isSelected(node.id)"
+            @mousedown.left.native="downOnNode({target: node.id})"
+            @touchstart.native="downOnNode({target: node.id})"
+          ></node>
         </svg>
       </div>
       
@@ -54,9 +46,13 @@ import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import types from '@/store/modules/room/types'
 import { modeTypes } from '@/store/modules/room/utils'
 import * as utils from './utils'
+import Node from './Node'
 
 export default {
   name: 'room_edit',
+  components: {
+    node: Node
+  },
   created () {
     this.load({id: this.$route.params.id})
   },
