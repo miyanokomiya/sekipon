@@ -17,9 +17,7 @@
             </div>
           </v-card-title>
           <v-card-actions>
-            <v-btn primary dark v-on:click="openRoom(room.id)">
-              Open
-            </v-btn>
+            <router-link :to="`room/${room.id}`"><v-btn primary dark>Open</v-btn></router-link>
             <v-btn primary small fab dark @click.native="readyEdit(room)">
               <v-icon dark>edit</v-icon>
             </v-btn>
@@ -56,7 +54,6 @@
 <script>
 import { mapState, mapMutations, mapActions } from 'vuex'
 import types from '@/store/modules/rooms/types'
-import router from '@/router'
 
 export default {
   name: 'rooms',
@@ -111,13 +108,6 @@ export default {
     dateFormat (val) {
       let date = new Date(val)
       return date.toLocaleString()
-    },
-    openRoom (id) {
-      router.push({
-        name: 'room',
-        params: {
-          id: id
-        }})
     }
   }
 }

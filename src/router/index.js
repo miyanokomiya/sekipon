@@ -1,9 +1,11 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Hello from '@/components/Hello'
 import Rooms from '@/components/Rooms'
+import Room from '@/components/room'
+import RoomManage from '@/components/room/Manage'
 import RoomEdit from '@/components/room/Edit'
 import RoomUser from '@/components/room/User'
+import RoomRightTool from '@/components/room/RightTool'
 
 Vue.use(Router)
 
@@ -12,46 +14,57 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'hello',
-      component: Hello
+      components: {
+        main: Rooms
+      },
+      children: []
     },
     {
       path: '/rooms',
       name: 'rooms',
-      component: Rooms,
+      components: {
+        main: Rooms
+      },
       children: []
     },
     {
       path: '/room/:id',
-      component: RoomEdit
-      // children: [
-      //   {
-      //     path: '',
-      //     name: 'room',
-      //     component: RoomEdit,
-      //     children: []
-      //   },
-      //   {
-      //     path: 'edit',
-      //     component: RoomEdit,
-      //     children: []
-      //   },
-      //   {
-      //     path: 'user',
-      //     component: RoomUser,
-      //     children: []
-      //   }
-      // ]
-    },
-    {
-      path: '/room/:id/edit',
-      component: RoomEdit,
-      children: []
-    },
-    {
-      path: '/room/:id/user',
-      component: RoomUser,
-      children: []
+      components: {
+        main: Room,
+        'right-toolber': RoomRightTool
+      },
+      children: [
+        {
+          path: '',
+          component: RoomManage,
+          children: []
+        },
+        {
+          path: 'edit',
+          component: RoomEdit,
+          children: []
+        },
+        {
+          path: 'user',
+          component: RoomUser,
+          children: []
+        }
+      ]
     }
+    // {
+    //   path: '/room/:id/edit',
+    //   components: {
+    //     main: RoomEdit,
+    //     'right-toolber': RoomRightTool
+    //   },
+    //   children: []
+    // },
+    // {
+    //   path: '/room/:id/user',
+    //   components: {
+    //     main: RoomUser
+    //   },
+    //   children: []
+    // }
   ]
 })

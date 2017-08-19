@@ -1,23 +1,11 @@
 <template>
-  <!--<v-app id="app">
-      <v-navigation-drawer></v-navigation-drawer>
-      <v-toolbar></v-toolbar>
-      <main>
-        <v-container fluid>
-          <router-view></router-view>
-        </v-container>
-      </main>
-      <v-footer></v-footer>
-    </v-app>-->
-  
   <v-app id="app" toolbar footer>
     <v-navigation-drawer persistent v-model="drawer" light enable-resize-watcher overflow>
       <v-list dense>
       </v-list>
     </v-navigation-drawer>
     <v-navigation-drawer persistent v-model="drawerRight" light right enable-resize-watcher overflow absolute>
-      <v-list dense>
-      </v-list>
+      <router-view name="right-toolber"></router-view>
     </v-navigation-drawer>
     <v-toolbar class="indigo" dark>
       <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
@@ -27,7 +15,7 @@
     </v-toolbar>
     <main>
       <v-container fluid class="main-container">
-        <router-view></router-view>
+        <router-view name="main"></router-view>
       </v-container>
     </main>
     <v-footer class="indigo">
