@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import types from './types'
 // import {firebaseDb, TIMESTAMP} from '@/firebase'
-import { wheelCanvas, pinchCanvas } from './utils'
+import { wheelCanvas, pinchCanvas, createNode } from './utils'
 
 export default {
   [types.CLEAR] (state) {
@@ -19,7 +19,9 @@ export default {
     state.modeType = modeType
   },
   [types.ADD_NODE] (state, { node }) {
-    Vue.set(state.nodeMap, node.id, node)
+    // 情報を補完する
+    const newNode = createNode(node)
+    Vue.set(state.nodeMap, newNode.id, newNode)
   },
   [types.REMOVE_NODE] (state, { id }) {
     Vue.delete(state.nodeMap, id)
@@ -39,6 +41,15 @@ export default {
   },
   [types.UPDATE_NODE] (state, { node }) {
     state.nodeMap[node.id] = node
+  },
+  [types.READY_EDIT] (state, { id }) {
+    state.editTarget = Object.assign({}, state.nodeMap[id])
+  },
+  [types.LOCAL_EDIT] (state, payload) {
+    state.editTarget = Object.assign({}, state.editTarget, payload)
+  },
+  [types.CANCEL_EDIT] (state) {
+    state.editTarget = null
   },
 
   [types.MOVE_VIEW] (state, { dx, dy }) {

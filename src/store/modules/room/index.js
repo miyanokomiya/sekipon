@@ -45,7 +45,8 @@ export default {
     },
     target: {
       root: null
-    }
+    },
+    editTarget: null
   },
   mutations,
   actions,

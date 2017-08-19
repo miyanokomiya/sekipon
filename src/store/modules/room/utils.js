@@ -125,3 +125,27 @@ export function setScaleAndAdjust (viewArea, scale, p) {
     top: viewArea.top + dy
   })
 }
+
+/**
+ * ノードを作成する
+ * @param {*} param0 初期パラメータ
+ */
+export function createNode ({
+  id = null,
+  type = nodeTypes.SEAT,
+  x = 0,
+  y = 0,
+  state = 0,
+  number = 0,
+  name = ''
+}) {
+  return {
+    id,
+    type,
+    x,
+    y,
+    state: 0,
+    number,
+    name
+  }
+}

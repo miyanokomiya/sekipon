@@ -9,6 +9,9 @@
     stroke-width="4"
   >
   </circle>
+  <text stroke="black" :x="node.x" :y="node.y" fontSize="10" textAnchor="middle" >
+    {{node.name}}
+  </text>
 </g>
 </template>
 

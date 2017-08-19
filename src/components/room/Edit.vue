@@ -30,6 +30,25 @@
           ></node>
         </svg>
       </div>
+
+      <!-- ノード編集用ダイアログ -->
+      <v-layout row justify-center>
+        <v-dialog v-model="editTarget" persistent v-if="editTarget">
+          <v-card>
+            <v-card-title>
+              <span class="headline">Profile</span>
+            </v-card-title>
+            <v-card-text>
+              <v-text-field label="Name" required v-model="nodeName"></v-text-field>
+            </v-card-text>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn class="blue--text darken-1" flat @click.native="cancelEdit">Cancel</v-btn>
+              <v-btn class="blue--text darken-1" flat @click.native="commitEdit">Save</v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+      </v-layout>
       
       <div v-if="showMenu">
         <v-btn-toggle :items="toggle_text" v-model="modeType"></v-btn-toggle>
@@ -72,7 +91,8 @@ export default {
       viewArea: state => state.viewArea,
       nodeMap: state => state.nodeMap,
       canvas: state => state.canvas,
-      _modeType: state => state.modeType
+      _modeType: state => state.modeType,
+      editTarget: state => state.editTarget
     }),
     ...mapGetters('room', [
       'svgViewBox',
@@ -85,6 +105,14 @@ export default {
       set (value) {
         this.changeMode({modeType: value})
       }
+    },
+    nodeName: {
+      get () {
+        return this.editTarget.name
+      },
+      set (value) {
+        this.localEdit({name: value})
+      }
     }
   },
   methods: {
@@ -93,13 +121,16 @@ export default {
       _downOnCanvas: types.CURSOR_DOWN,
       downOnNode: types.CURSOR_DOWN_ON_NODE,
       _wheelOnCanvas: types.WHEEL_ON_CANVAS,
-      _multiTouchOnCanvas: types.CURSOR_MULTI_TOUCH
+      _multiTouchOnCanvas: types.CURSOR_MULTI_TOUCH,
+      localEdit: types.LOCAL_EDIT,
+      cancelEdit: types.CANCEL_EDIT
     }),
     ...mapActions('room', {
       load: types.LOAD,
       _upOnCanvas: types.CURSOR_UP,
       _dragOnCanvas: types.CURSOR_DRAG,
-      removeNode: types.REMOVE_NODE
+      removeNode: types.REMOVE_NODE,
+      commitEdit: types.COMMIT_EDIT
     }),
     downOnCanvas (e) {
       const p = utils.getPoint(e)

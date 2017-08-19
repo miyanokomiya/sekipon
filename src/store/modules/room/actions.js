@@ -1,7 +1,7 @@
 import { firebaseDb } from '@/firebase'
 import rootTypes from '@/store/types'
 import types from './types'
-import { modeTypes, v2f } from './utils'
+import { modeTypes, v2f, createNode } from './utils'
 
 export default {
   [types.LOAD] (context, { id }) {
@@ -31,14 +31,13 @@ export default {
     const state = context.state
     const roomId = state.profile.id
     const id = firebaseDb.ref('rooms').push().key
-    const type = state.nodeType
-    const node = {
+    const node = createNode({
       id,
-      type,
+      type: state.nodeType,
       x,
       y,
       state: 0
-    }
+    })
     firebaseDb.ref(`roomDetails/${roomId}/nodeMap/${id}`).set(node).then(() => {
       context.commit(types.SELECT_NODE, { id })
     })
@@ -48,6 +47,17 @@ export default {
     const roomId = state.profile.id
     const id = state.target.root
     firebaseDb.ref(`roomDetails/${roomId}/nodeMap/${id}`).remove()
+  },
+  [types.COMMIT_EDIT] (context) {
+    const state = context.state
+    const roomId = state.profile.id
+    let target = state.editTarget
+    firebaseDb
+      .ref(`roomDetails/${roomId}/nodeMap/${target.id}`)
+      .set(target)
+      .then(() => {
+        context.commit(types.CANCEL_EDIT)
+      })
   },
 
   [types.CURSOR_DRAG] (context, { position }) {
@@ -101,7 +111,16 @@ export default {
           // カーソル下に要素あり
           const id = cursorState.down.target
           const target = state.nodeMap[id]
-          context.commit(types.SELECT_NODE, { id })
+
+          if (id === state.target.root) {
+            // 既に選択中
+            if (state.modeType !== modeTypes.TOGGLE_STATE) {
+              context.commit(types.READY_EDIT, { id })
+            }
+          } else {
+            // 選択していなかった
+            context.commit(types.SELECT_NODE, { id })
+          }
 
           if (state.modeType === modeTypes.TOGGLE_STATE) {
             const nextTarget = Object.assign({}, target, {
