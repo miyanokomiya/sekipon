@@ -6,6 +6,7 @@ export default {
   namespaced: true,
   state: {
     profile: null,
+    profileEditTarget: null,
     nodeMap: {},
     viewArea: {
       left: 0,

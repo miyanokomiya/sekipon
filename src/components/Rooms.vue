@@ -8,55 +8,38 @@
       </v-flex>
       <v-flex xs12 sm6 offset-sm3>
         <!-- 部屋情報カード -->
-        <v-card class="room-card" v-for="(room, index) in rooms" v-bind:room="room" v-bind:index="index" v-bind:key="room.id">
-          <v-card-title primary-title>
-            <div>
-              <h3 class="headline mb-0">{{room.name}}</h3>
-              <div>{{room.note}}</div>
-              <div class="grey--text">{{dateFormat(room.created)}}</div>
-            </div>
-          </v-card-title>
-          <v-card-actions>
-            <router-link :to="`room/${room.id}`"><v-btn primary dark>Open</v-btn></router-link>
-            <v-btn primary small fab dark @click.native="readyEdit(room)">
-              <v-icon dark>edit</v-icon>
-            </v-btn>
-            <v-btn small fab dark class="black" v-on:click="removeRoom(room)">
-              <v-icon dark>delete</v-icon>
-            </v-btn>
-          </v-card-actions>
-        </v-card>
+        <room-card
+          v-for="(room, index) in rooms"
+          :room="room"
+          :index="index"
+          :key="room.id"
+          @readyEdit="readyEdit(room)"
+          @removeRoom="removeRoom(room)">
+        </room-card>
       </v-flex>
     </v-layout>
     <!-- 部屋情報編集用ダイアログ -->
-    <v-layout row justify-center>
-      <v-dialog v-model="editTarget" persistent v-if="editTarget">
-        <v-card>
-          <v-card-title>
-            <span class="headline">Room Profile</span>
-          </v-card-title>
-          <v-card-text>
-            <v-text-field label="Name" required v-model="name"></v-text-field>
-            <v-text-field label="Password" type="password" v-model="password"></v-text-field>
-            <v-text-field multi-line label="note" v-model="note"></v-text-field>
-          </v-card-text>
-          <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-btn class="blue--text darken-1" flat @click.native="cancelEdit">Cancel</v-btn>
-            <v-btn class="blue--text darken-1" flat @click.native="commitEdit">Save</v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
-    </v-layout>
+    <room-edit-dialog
+      :room="editTarget"
+      @edit="localEdit"
+      @cancel="cancelEdit"
+      @save="commitEdit">
+    </room-edit-dialog>
   </v-container>
 </template>
 
 <script>
 import { mapState, mapMutations, mapActions } from 'vuex'
 import types from '@/store/modules/rooms/types'
+import RoomCard from './RoomCard'
+import RoomEditDialog from './RoomEditDialog'
 
 export default {
   name: 'rooms',
+  components: {
+    'room-card': RoomCard,
+    'room-edit-dialog': RoomEditDialog
+  },
   created () {
     this.load()
   },
@@ -68,31 +51,7 @@ export default {
     ...mapState('rooms', {
       rooms: state => state.rooms,
       editTarget: state => state.editTarget
-    }),
-    name: {
-      get () {
-        return this.editTarget.name
-      },
-      set (value) {
-        this.localEdit({name: value})
-      }
-    },
-    password: {
-      get () {
-        return this.editTarget.password
-      },
-      set (value) {
-        this.localEdit({password: value})
-      }
-    },
-    note: {
-      get () {
-        return this.editTarget.note
-      },
-      set (value) {
-        this.localEdit({note: value})
-      }
-    }
+    })
   },
   methods: {
     ...mapMutations('rooms', {
@@ -104,18 +63,12 @@ export default {
       load: types.LOAD,
       removeRoom: types.REMOVE,
       commitEdit: types.COMMIT_EDIT
-    }),
-    dateFormat (val) {
-      let date = new Date(val)
-      return date.toLocaleString()
-    }
+    })
   }
 }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-.room-card {
-  text-align: left;
-}
+
 </style>

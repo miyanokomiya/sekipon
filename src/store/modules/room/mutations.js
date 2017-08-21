@@ -5,7 +5,7 @@ import { wheelCanvas, pinchCanvas, createNode } from './utils'
 
 export default {
   [types.CLEAR] (state) {
-    state.profile = {}
+    state.profile = null
     state.nodeMap = {}
   },
   [types.INIT] (state, { room }) {

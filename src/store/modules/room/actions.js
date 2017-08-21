@@ -5,26 +5,43 @@ import { modeTypes, v2f, createNode } from './utils'
 
 export default {
   [types.LOAD] (context, { id }) {
+    const state = context.state
     context.commit(types.CLEAR)
     firebaseDb.ref(`roomDetails`).off()
 
     // 部屋情報取得
-    firebaseDb.ref(`rooms/${id}`).once('value', data => {
+    firebaseDb.ref(`rooms/${id}`).on('value', data => {
       const room = data.val()
-      context.commit(types.INIT, { room })
-      context.commit(rootTypes.SET_TITLE, room.name, { root: true })
+      if (!room) {
+        // 存在しない
+        context.commit(types.CLEAR)
+        context.commit(rootTypes.SET_TITLE, '', { root: true })
+      } else {
+        if (!state.profile) {
+          // ソケットハンドラ設定
+          firebaseDb.ref(`rooms/${id}`).on('child_changed', data => {
+            const room = Object.assign({}, context.state.profile)
+            room[data.key] = data.val()
+            context.commit(types.INIT, { room })
+            context.commit(rootTypes.SET_TITLE, room.name, { root: true })
+          })
 
-      // 部屋詳細情報と接続
-      const ref = firebaseDb.ref(`roomDetails/${id}/nodeMap`)
-      ref.on('child_added', data => {
-        context.commit(types.ADD_NODE, { node: data.val() })
-      })
-      ref.on('child_changed', data => {
-        context.commit(types.UPDATE_NODE, { node: data.val() })
-      })
-      ref.on('child_removed', data => {
-        context.commit(types.REMOVE_NODE, { id: data.val().id })
-      })
+          // 部屋詳細情報と接続
+          const ref = firebaseDb.ref(`roomDetails/${id}/nodeMap`)
+          ref.on('child_added', data => {
+            context.commit(types.ADD_NODE, { node: data.val() })
+          })
+          ref.on('child_changed', data => {
+            context.commit(types.UPDATE_NODE, { node: data.val() })
+          })
+          ref.on('child_removed', data => {
+            context.commit(types.REMOVE_NODE, { id: data.val().id })
+          })
+        }
+
+        context.commit(types.INIT, { room })
+        context.commit(rootTypes.SET_TITLE, room.name, { root: true })
+      }
     })
   },
   [types.ADD_NODE] (context, { x, y }) {

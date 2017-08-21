@@ -1,4 +1,4 @@
-import {firebaseDb} from '@/firebase'
+import { firebaseDb } from '@/firebase'
 import types from './types'
 
 export default {
@@ -7,17 +7,18 @@ export default {
     context.commit(types.CLEAR)
     ref.off()
     ref.on('child_added', data => {
-      context.commit(types.ADD, {room: data.val()})
+      context.commit(types.ADD, { room: data.val() })
     })
     ref.on('child_changed', data => {
-      context.commit(types.CHANGE, {room: data.val()})
+      context.commit(types.CHANGE, { room: data.val() })
     })
     ref.on('child_removed', data => {
-      context.commit(types.REMOVE, {id: data.val().id})
+      context.commit(types.REMOVE, { id: data.val().id })
     })
   },
-  [types.REMOVE] (context, {id}) {
+  [types.REMOVE] (context, { id }) {
     const key = id
+    firebaseDb.ref(`roomDetails/${key}`).remove()
     firebaseDb.ref(`rooms/${key}`).remove()
   },
   [types.COMMIT_EDIT] (context) {
