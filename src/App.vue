@@ -2,6 +2,16 @@
   <v-app id="app" toolbar footer>
     <v-navigation-drawer persistent v-model="drawer" light enable-resize-watcher overflow>
       <v-list dense>
+        <router-link to="/rooms">
+          <v-list-tile>
+            <v-list-tile-action>
+              <v-icon>exit_to_app</v-icon>
+            </v-list-tile-action>
+            <v-list-tile-content>
+              <v-list-tile-title>Room List</v-list-tile-title>
+            </v-list-tile-content>
+          </v-list-tile>
+        </router-link>
       </v-list>
     </v-navigation-drawer>
     <v-navigation-drawer persistent v-model="drawerRight" light right enable-resize-watcher overflow absolute>
