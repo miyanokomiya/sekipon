@@ -2,11 +2,15 @@
   "rules": {
     "rooms": {
       ".read": "true",
-      ".write": "true"
+      "$room_id": {
+        ".write": "true"
+      }
     },
     "roomDetails": {
-      ".read": "true",
-      ".write": "true"
+      "$room_id": {
+        ".read": "root.child('rooms/'+$room_id).exists()",
+        ".write": "root.child('rooms/'+$room_id).exists()"
+      }
     }
   }
 }
